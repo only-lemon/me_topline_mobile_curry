@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    Hello World ...
 
+    <p id="sole">Please start your performance</p>
     <!-- 一个路由规则只服务于一个组件 -->
     <router-view></router-view>
   </div>
@@ -14,4 +14,8 @@ export default {
 </script>
 
 <style lang="less">
+#sole{
+  color:purple;
+  text-align: center;
+}
 </style>
