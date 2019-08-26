@@ -14,3 +14,12 @@ export var gianCurrentChannelArticles = (params) => {
     params: params
   })
 }
+
+// 举报文章时所需要发送的请求的方法
+export var reportArticle = (params) => {
+  return instance({
+    url: '/app/v1_0/article/reports',
+    method: 'POST',
+    data: params
+  })
+}

@@ -1,9 +1,19 @@
 import axios from 'axios'
 import store from '@/store/store'
+import JSONBig from 'json-bigint'
 
 const instance = axios.create({
   baseURL: 'http://ttapi.research.itcast.cn'
 })
+
+// 配置不使用axios默认json.parse去处理后端响应回来的jsjon字符串
+instance.defaults.transformResponse = [(data) => {
+  try {
+    return JSONBig.parse(data)
+  } catch (e) {
+    return data
+  }
+}]
 
 // -------------------------------------------------------------------------------
 

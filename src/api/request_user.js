@@ -13,12 +13,11 @@ export var login = (requestParams) => {
   })
 }
 
-// 拉取当前登录用户的频道列表数据的要发送的请求的方法
-export const gainUserChannels = () => {
+// 拉黑发表文章的作者
+export var addBlackList = (requestParams) => {
   return instance({
-    url: '/app/v1_0/user/channels',
-    method: 'get'
-    // 此请求不需要传参
-    // data: {}
+    url: '/app/v1_0/user/blacklists',
+    method: 'post',
+    data: requestParams
   })
 }

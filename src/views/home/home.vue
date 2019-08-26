@@ -2,18 +2,17 @@
   <div>
     <van-nav-bar title="首页" />
     <van-tabs v-model="activeChannelIndex">
-      <van-tab
-        :title="channel.name"
-        v-for="channel in channels"
-        :key="channel.id"
-      >
+      <div slot="nav-right" class="wap_nav">
+         <van-icon size="27" name="wap-nav" />
+      </div>
+      <van-tab :title="channel.name" v-for="channel in channels" :key="channel.id">
         <!--
           下拉刷新组件
           v-model="isLoading" 用来控制刷新的 loading 效果
           @refresh 刷新的事件
           当它触发了 refresh 事件的时候，它自动会把 loading 设置为 true
           我们要做的是：在刷新处理方法中发请求，请求结束以后，将 loading 设置为 false
-         -->
+        -->
         <van-pull-refresh v-model="channel.pullLoading" @refresh="onRefresh">
           <!--
             列表组件（提供了上拉加载更多功能）
@@ -23,7 +22,7 @@
               如果为 true，则不再触发 onLoad 去加载更多了
             finished-text 配置数据加载完毕之后的提示文本
             当它加载更多的时候，它会触发 load 事件
-           -->
+          -->
           <van-list
             v-model="channel.loading"
             :finished="channel.finished"
@@ -32,7 +31,7 @@
           >
             <van-cell
               v-for="article in channel.articles"
-              :key="article.art_id"
+              :key="article.art_id.toString()"
               :title="article.title"
             >
               <div slot="label">
@@ -45,6 +44,7 @@
                   <span>{{ article.aut_name }}</span>
                   <span>{{ article.comm_count }}评论</span>
                   <span>{{ article.pubdate | relativeTime }}</span>
+                  <van-icon name="close" @click="click_close(article)" />
                 </div>
               </div>
             </van-cell>
@@ -52,14 +52,42 @@
         </van-pull-refresh>
       </van-tab>
     </van-tabs>
+    <!-- 举报窗口 -->
+    <van-dialog v-model="reportShow" :showConfirmButton="false" :closeOnClickOverlay="true">
+
+      <van-cell-group v-if="!ISJunkContent">
+        <van-cell title="反馈垃圾内容" is-link icon="warning" label="低俗,标题党等"  @click="ISJunkContent = true" />
+        <van-cell title="拉黑此作者" icon="manager"  @click="addBlackList_()" />
+      </van-cell-group>
+      <van-cell-group v-else>
+        <van-cell icon="arrow-left" @click="ISJunkContent = false" />
+        <van-cell
+          v-for="item in reportRubbishContentList"
+          :title="item.title"
+          :key="item.value"
+          @click="reportJunkContent(item.value)"
+        />
+      </van-cell-group>
+
+    </van-dialog>
+
+    <!-- 编辑频道组件 -->
+    <!-- 开始向子组件传输数据 -->
+    <edit-channel :myChannels="channels"></edit-channel>
+
   </div>
 </template>
 
 <script>
-import { gainUserChannels } from '@/api/request_user'
-import { gianCurrentChannelArticles } from '@/api/request_channel_article'
+import { gainUserChannels } from '@/api/request_channel'
+import { addBlackList } from '@/api/request_user'
+import { gianCurrentChannelArticles, reportArticle } from '@/api/request_article'
+import EDITCHANNEL from './components/editChannel'
 
 export default {
+  components: {
+    'edit-channel': EDITCHANNEL
+  },
   name: 'HomeIndex',
   data () {
     return {
@@ -71,7 +99,29 @@ export default {
       // isLoading: false,
 
       // 获取当前用户的所有频道列表
-      channels: []
+      channels: [],
+
+      // 控制举报弹窗显示与隐藏
+      reportShow: false,
+
+      // 控制反馈垃圾内容选项的显示与隐藏
+      ISJunkContent: false,
+
+      // 定义反馈垃圾内容选项数据
+      reportRubbishContentList: [
+        { title: '其他问题', value: 0 },
+        { title: '标题夸张', value: 1 },
+        { title: '低俗色情', value: 2 },
+        { title: '错别字多', value: 3 },
+        { title: '旧闻重复', value: 4 },
+        { title: '广告软文', value: 5 },
+        { title: '内容不实', value: 6 },
+        { title: '涉嫌违法犯罪', value: 7 },
+        { title: '侵权', value: 8 }
+      ],
+
+      // 存一下当前点击关闭按钮所属的文章数据
+      closeArticle: null
     }
   },
 
@@ -89,6 +139,8 @@ export default {
   },
 
   methods: {
+
+    // 获取当前用户所有的频道数据的方法
     async loadChannels () {
       const { data } = await gainUserChannels()
       data.data.channels.forEach(channel => {
@@ -101,6 +153,7 @@ export default {
       this.channels = data.data.channels
     },
 
+    // 上拉刷新
     async onLoad () {
       const { currentChannel } = this
       const { data } = await gianCurrentChannelArticles({
@@ -124,25 +177,26 @@ export default {
 
       // 本次加载更多 OK 了，将本次的 loading 设置为 false
       currentChannel.loading = false
+
+      // onLoad () {
+      //   const { currentChannel } = this
+      //   // 异步更新数据
+      //   setTimeout(() => {
+      //     for (let i = 0; i < 10; i++) {
+      //       currentChannel.articles.push(currentChannel.articles.length + 1)
+      //     }
+      //     // 加载状态结束（本次）
+      //     currentChannel.loading = false
+
+      //     // 数据全部加载完成
+      //     if (currentChannel.articles.length >= 40) {
+      //       currentChannel.finished = true
+      //     }
+      //   }, 500)
+      // },
     },
 
-    // onLoad () {
-    //   const { currentChannel } = this
-    //   // 异步更新数据
-    //   setTimeout(() => {
-    //     for (let i = 0; i < 10; i++) {
-    //       currentChannel.articles.push(currentChannel.articles.length + 1)
-    //     }
-    //     // 加载状态结束（本次）
-    //     currentChannel.loading = false
-
-    //     // 数据全部加载完成
-    //     if (currentChannel.articles.length >= 40) {
-    //       currentChannel.finished = true
-    //     }
-    //   }, 500)
-    // },
-
+    // 下拉刷新
     async onRefresh () {
       const { currentChannel } = this
       const { data } = await gianCurrentChannelArticles({
@@ -171,13 +225,109 @@ export default {
       currentChannel.pullLoading = false
 
       this.$toast('刷新成功')
+    },
+
+    // 当点击关闭按钮时把当前文章存一份,在反馈垃圾内容时用
+    click_close (article) {
+      // 显示举报窗口
+      this.reportShow = true
+
+      // 存当前点击的关闭按钮所在的文章
+      this.closeArticle = article
+    },
+
+    // 开始举报文章
+    async reportJunkContent (reportType) {
+      try {
+        await reportArticle(
+          {
+          // 搜嘎   此处需要处理id数据  bigint  解决后端返回数字超出js安全整数范围
+            target: this.closeArticle.art_id.toString(),
+            type: reportType,
+            remark: null
+          }
+        )
+
+        this.$toast('举报OK~~~~')
+      } catch (error) {
+        // console.log('---------此处包裹的是错误信息-------------')
+        // console.log(error)
+        // console.log('---------此处包裹的是错误信息-------------')
+        this.$toast('亲,您已经举报过了呢!别再点了呢!')
+      }
+
+      // 关闭举报的窗口
+      this.reportShow = false
+
+      // console.log('-----------下面是举报文章后台响应回来的结果--------------')
+      // console.log(reportResult)
+      // console.log('-----------上面是举报文章后台响应回来的结果--------------')
+    },
+
+    // 开始拉黑用户
+    async addBlackList_ () {
+      await addBlackList({
+        target: this.closeArticle.aut_id
+      })
+
+      // 删除当前用户关注的所有频道上的此作者发布的文章
+      this.channels.forEach((channel) => {
+        for (var i = 0; i < channel.articles.length; i++) {
+          if (channel.articles[i].aut_id === this.closeArticle.aut_id) {
+            channel.articles.splice(i, 1)
+
+            // 当在数组中删除一个数据的话 后面的数据的索引值就会发生改变  如果不减去1的话 就会漏掉一个数据没有对比上
+            i--
+          }
+        }
+      })
+
+      // 关闭举报的窗口
+      this.reportShow = false
+
+      // 提醒用户拉黑成功
+      this.$toast('亲,您已成功将此作者拉入黑名单!')
     }
   }
 }
 </script>
 
-<style>
+<style lang="less" scoped>
+
+// 开始固定定位上面的三个东西
+// 首页文字的样式
+.van-hairline--bottom{
+  position: sticky;
+  top: 0px;
+  z-index: 3 !important;
+}
+
+// 标签页的样式
+.van-tabs /deep/ .van-tabs__wrap--scrollable {
+  position: fixed;
+  top: 46px;
+  left: 0;
+  right: 16px;
+  z-index: 2;
+}
+
 .article-item-label span {
   margin-right: 5px;
 }
-</style>
+
+// 文章上X号的样式
+.van-icon-close {
+  float: right;
+}
+
+// 面包按钮样式
+.wap_nav {
+  position: sticky;
+  right: 0;
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  opacity: 0.8;
+}
+
+</style>>
