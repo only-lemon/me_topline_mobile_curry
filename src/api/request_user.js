@@ -12,3 +12,13 @@ export var login = (requestParams) => {
     data: requestParams
   })
 }
+
+// 拉取当前登录用户的频道列表数据的要发送的请求的方法
+export const gainUserChannels = () => {
+  return instance({
+    url: '/app/v1_0/user/channels',
+    method: 'get'
+    // 此请求不需要传参
+    // data: {}
+  })
+}

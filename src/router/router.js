@@ -12,6 +12,7 @@ import HOME from '@/views/home/home'
 import LOGIN from '@/views/login/login'
 import TEST from '@/me_test_export_import/me_test_export_import_for_import'
 import IS404 from '@/views/404/404'
+import TABBAR from '@/views/tabbar/tabbar'
 // import mapMutations from "@/store/store"
 import { getUser } from '@/api/storage_user_token'
 
@@ -24,7 +25,14 @@ const router = new VueRouter({
     // 配置404路由规则
     { path: '*', name: '_404', component: IS404 },
 
-    { path: '/', name: 'home', component: HOME },
+    {
+      path: '/',
+      // name: 'tabbar',
+      component: TABBAR,
+      children: [
+        { path: '/', name: 'home', component: HOME }
+      ]
+    },
     { path: '/login', name: 'login', component: LOGIN },
     // 此路由跟项目完全没关系,,,我是为了测试导入导出的现象配置的路由规则
     { path: '/meTestImExport', name: 'test', component: TEST }

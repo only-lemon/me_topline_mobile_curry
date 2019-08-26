@@ -66,12 +66,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.van-nav-bar {
-  background: plum;
-  .van-nav-bar__title {
-    color: white;
-  }
-}
 .van-button {
   margin-top: 20px;
   display: inline-block;
