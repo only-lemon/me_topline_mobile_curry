@@ -24,3 +24,24 @@ export const gainAllChannels = () => {
     method: 'get'
   })
 }
+
+// 删除用户指定频道需要发送的请求的方法
+export const deleteUserChannel = (channelID) => {
+  return instance({
+    url: `/app/v1_0/user/channels/${channelID}`,
+    method: 'DELETE'
+  })
+}
+
+// 添加用户点击的想要关注的频道（增量式）需要发送的请求的方法
+export const addUserChannel = (channelID, seq) => {
+  return instance({
+    url: '/app/v1_0/user/channels',
+    method: 'POST',
+    data: {
+      channels: [
+        { id: channelID, seq }
+      ]
+    }
+  })
+}

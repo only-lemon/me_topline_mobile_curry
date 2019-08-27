@@ -3,7 +3,7 @@
     <van-nav-bar title="首页" />
     <van-tabs v-model="activeChannelIndex">
       <div slot="nav-right" class="wap_nav">
-         <van-icon size="27" name="wap-nav" @click="editChannelShow = !editChannelShow" />
+         <van-icon size="33" name="wap-nav" @click="editChannelShow = !editChannelShow" />
       </div>
       <van-tab :title="channel.name" v-for="channel in channels" :key="channel.id">
         <!--
@@ -73,7 +73,12 @@
 
     <!-- 编辑频道组件 -->
     <!-- 开始向子组件传输数据 -->
-    <edit-channel :myChannels="channels" v-model="editChannelShow"></edit-channel>
+    <edit-channel
+        :myChannels="channels"
+        v-model="editChannelShow"
+        :activeChannelIndex="activeChannelIndex"
+        @skipChannel="skipchannel"
+    ></edit-channel>
 
   </div>
 </template>
@@ -290,6 +295,17 @@ export default {
 
       // 提醒用户拉黑成功
       this.$toast('亲,您已成功将此作者拉入黑名单!')
+    },
+
+    // 在频道组件我的频道中未编辑的状态下点击我的频道进行的跳转的方法
+    skipchannel (channelIndex) {
+      // 关闭弹出层(关闭编辑频道子组件)
+      this.editChannelShow = false
+      // console.log(11111111111111111111111111111111111111111)
+      // console.log('子组件传递过来的点击的频道的索引是: ' + channelIndex)
+
+      // 跳转到点击的那个频道上去
+      this.activeChannelIndex = channelIndex
     }
   }
 }
@@ -306,7 +322,9 @@ export default {
 }
 
 // 标签页的样式
-.van-tabs /deep/ .van-tabs__wrap--scrollable {
+// .van-tabs__wrap--scrollable  卧槽今天真的是奇奇怪怪啊! 你说这个类名用的好好的突然就不好使了,,,你说奇怪不奇怪
+// 我去检查DOM结构的时候  发现类名变成如下的了   你说奇怪不奇怪  上午还好使呢 下午就不好使了,,,,醉了醉了,,,
+.van-tabs /deep/ .van-hairline--top-bottom {
   position: fixed;
   top: 46px;
   left: 0;
