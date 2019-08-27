@@ -3,7 +3,7 @@
     <van-nav-bar title="首页" />
     <van-tabs v-model="activeChannelIndex">
       <div slot="nav-right" class="wap_nav">
-         <van-icon size="27" name="wap-nav" />
+         <van-icon size="27" name="wap-nav" @click="editChannelShow = !editChannelShow" />
       </div>
       <van-tab :title="channel.name" v-for="channel in channels" :key="channel.id">
         <!--
@@ -73,7 +73,7 @@
 
     <!-- 编辑频道组件 -->
     <!-- 开始向子组件传输数据 -->
-    <edit-channel :myChannels="channels"></edit-channel>
+    <edit-channel :myChannels="channels" v-model="editChannelShow"></edit-channel>
 
   </div>
 </template>
@@ -121,7 +121,10 @@ export default {
       ],
 
       // 存一下当前点击关闭按钮所属的文章数据
-      closeArticle: null
+      closeArticle: null,
+
+      // 控制编辑频道子组件组件的显示与隐藏
+      editChannelShow: false
     }
   },
 
