@@ -49,6 +49,7 @@
 
 <script>
 import { gainAllChannels, deleteUserChannel, addUserChannel } from '@/api/request_channel'
+import { mapState } from 'vuex'
 
 export default {
   name: 'ChannelEdit',
@@ -66,6 +67,8 @@ export default {
   },
 
   computed: {
+    ...mapState(['user']),
+
     // 拿到推荐频道数据
     recommendChannel () {
       // 先得到我的频道列表的所有的频道 id
@@ -123,12 +126,21 @@ export default {
     async deleteORskipChannel (channel, index) {
       // 在closeToken为false的情况下是跳转频道  为true的情况下是删除频道
       if (this.closeToken) {
-        // 当然这里得要真正的向后台发送请求删除用户频道数据
-        // 真实后台删除用户频道数据
-        await deleteUserChannel(channel.id)
-
         // 页面显示上看着删除了用户频道数据
         this.myChannels.splice(index, 1)
+
+        // 登录与否对应的处理业务的逻辑是不同的
+        if (this.user) {
+          console.log('已经登录')
+          // 当然这里得要真正的向后台发送请求删除用户频道数据
+          // 真实后台删除用户频道数据
+          await deleteUserChannel(channel.id)
+        } else {
+          console.log('未登录')
+
+          // 没有登录,,,保存到本地存储
+          window.localStorage.setItem('channels', JSON.stringify(this.myChannels))
+        }
       } else {
         // console.log(66666666)
         // 触发一个自定义事件把索引带过去带到父组件中去
@@ -143,9 +155,19 @@ export default {
       // 页面显示上看着添加了用户频道数据
       this.myChannels.push(channel)
 
-      // console.log(55555555)
-      // 直接向后台发送请求添加到当前用户频道数据上   <--->   真实操作,操作到后台数据上
-      await addUserChannel(channel.id, this.myChannels.length)
+      // 登录与否对应的处理业务的逻辑是不同的
+      if (this.user) {
+        // console.log(55555555)
+        // 直接向后台发送请求添加到当前用户频道数据上   <--->   真实操作,操作到后台数据上
+        await addUserChannel(channel.id, this.myChannels.length)
+
+        //  -----------------------------------------------
+      } else { // 我就想在上下各留一个空行,,,自动修复语法校验代码风格还不让留,,,那我就制不了你了,,,呵呵呵,,,
+        //  -----------------------------------------------
+
+        // 没有登录,,,则保存到本地存储
+        window.localStorage.setItem('channels', JSON.stringify(this.myChannels))
+      }
 
       // 又发现了一个有意思的现象,,,这是因为back end后后端接口出现的问题和我们front end前端没有关系
       // 什么有意思的现象呢就是当这个用户曾经添加过这个频道时尽管他后来又删除了这频道数据

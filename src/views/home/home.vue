@@ -1,6 +1,17 @@
 <template>
   <div>
-    <van-nav-bar title="首页" />
+    <van-nav-bar fixed>
+      <van-button
+        color="hotpink"
+        size="small"
+        class="search-btn"
+        slot="title"
+        icon="search"
+        type="warning"
+        round
+        @click="$router.push({ path: '/search' })"
+      >搜索</van-button>
+    </van-nav-bar>
     <van-tabs v-model="activeChannelIndex">
       <div slot="nav-right" class="wap_nav">
          <van-icon size="33" name="wap-nav" @click="editChannelShow = !editChannelShow" />
@@ -88,6 +99,7 @@ import { gainUserChannels } from '@/api/request_channel'
 import { addBlackList } from '@/api/request_user'
 import { gianCurrentChannelArticles, reportArticle } from '@/api/request_article'
 import EDITCHANNEL from './components/editChannel'
+import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -134,6 +146,8 @@ export default {
   },
 
   computed: {
+    ...mapState(['user']),
+
     currentChannel () {
       return this.channels[this.activeChannelIndex]
     }
@@ -150,15 +164,36 @@ export default {
 
     // 获取当前用户所有的频道数据的方法
     async loadChannels () {
-      const { data } = await gainUserChannels()
-      data.data.channels.forEach(channel => {
+      // 用来存储是登录拉取到的用户频道数据,,,还是本地存储拉取到的用户频道数据
+      let channels = []
+
+      // 登录与否对应的处理业务的逻辑是不同的
+      if (this.user) {
+        const { data } = await gainUserChannels()
+        channels = data.data.channels
+      } else {
+        const localChannels = JSON.parse(window.localStorage.getItem('channels'))
+
+        // 下面这段代码先暂时加上吧,,,其实我觉得应该是可以不用加这段代码的,,,
+        // ----------------------------是包裹起来的这段---------------------------------
+
+        if (localChannels) {
+          channels = localChannels
+        } else {
+          const { data } = await gainUserChannels()
+          channels = data.data.channels
+        }
+
+        // ----------------------------是包裹起来的这段---------------------------------
+      }
+      channels.forEach(channel => {
         channel.articles = [] // 存储频道的文章列表
         channel.finished = false // 存储频道是否加载完毕的状态
         channel.loading = false // 存储频道的上拉加载更多的 loading 状态
         channel.pullLoading = false // 存储频道的下拉刷新的 loading 状态
         channel.timestamp = null // 存储当前频道加载下一页数据的时间戳标志（页码）
       })
-      this.channels = data.data.channels
+      this.channels = channels
     },
 
     // 上拉刷新
@@ -349,6 +384,14 @@ export default {
   align-items: center;
   background-color: #fff;
   opacity: 0.8;
+}
+
+// 搜索按钮样式
+.search-btn {
+  width: 100%;
+  .van-icon {
+    color: #fff;
+  }
 }
 
 </style>>

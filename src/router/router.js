@@ -13,8 +13,9 @@ import LOGIN from '@/views/login/login'
 import TEST from '@/me_test_export_import/me_test_export_import_for_import'
 import IS404 from '@/views/404/404'
 import TABBAR from '@/views/tabbar/tabbar'
+import SEARCH from '@/views/search/search'
 // import mapMutations from "@/store/store"
-import { getUser } from '@/api/storage_user_token'
+// import { getUser } from '@/api/storage_user_token'
 
 Vue.use(VueRouter)
 
@@ -34,20 +35,28 @@ const router = new VueRouter({
       ]
     },
     { path: '/login', name: 'login', component: LOGIN },
+
     // 此路由跟项目完全没关系,,,我是为了测试导入导出的现象配置的路由规则
-    { path: '/meTestImExport', name: 'test', component: TEST }
+    { path: '/meTestImExport', name: 'test', component: TEST },
+
+    // 配置搜索组件的路由规则
+    { path: '/search', name: 'search', component: SEARCH }
+
   ]
 })
 
 // 配置拦截未登录路由跳转
 // 导航守卫,,,每次路由跳转前要做的事情在此去做!!!
-router.beforeEach((to, from, next) => {
-  // ${//to and from are Route Object,next() must be called to resolve the hook}
-  // 如果你不是去登录页,但是你还没登录(但是你还没有登录的用户信息,,,但是你还没有token(就代表你还没登录))  --->  你就给我去登录页
-  // getUser.token === undefined  说明没有token  取反 取非 !  --->  true   ---> 走if为true
-  // getUSer.token === "xxxxxxxxxx" 说明有token  取反 取非 !  --->  false  ---> 走if的else
-  if (to.path !== '/login' && !getUser().token) return next('/login')
-  next()
-})
+
+// 暂时需要把导航守卫注释掉,因为当前项目的业务逻辑中,,,是可以在不登录的状态下浏览新闻去做一些事情的,,,
+
+// router.beforeEach((to, from, next) => {
+//   // ${//to and from are Route Object,next() must be called to resolve the hook}
+//   // 如果你不是去登录页,但是你还没登录(但是你还没有登录的用户信息,,,但是你还没有token(就代表你还没登录))  --->  你就给我去登录页
+//   // getUser.token === undefined  说明没有token  取反 取非 !  --->  true   ---> 走if为true
+//   // getUSer.token === "xxxxxxxxxx" 说明有token  取反 取非 !  --->  false  ---> 走if的else
+//   if (to.path !== '/login' && !getUser().token) return next('/login')
+//   next()
+// })
 
 export default router
