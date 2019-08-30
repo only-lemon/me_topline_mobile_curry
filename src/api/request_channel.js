@@ -11,7 +11,7 @@ import instance from '@/utility/request_config_axios'
 export const gainUserChannels = () => {
   return instance({
     url: '/app/v1_0/user/channels',
-    method: 'get'
+    method: 'GET'
     // 此请求不需要传参
     // data: {}
   })
@@ -21,7 +21,7 @@ export const gainUserChannels = () => {
 export const gainAllChannels = () => {
   return instance({
     url: '/app/v1_0/channels',
-    method: 'get'
+    method: 'GET'
   })
 }
 

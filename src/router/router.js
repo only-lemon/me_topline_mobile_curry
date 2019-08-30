@@ -14,6 +14,8 @@ import TEST from '@/me_test_export_import/me_test_export_import_for_import'
 import IS404 from '@/views/404/404'
 import TABBAR from '@/views/tabbar/tabbar'
 import SEARCH from '@/views/search/search'
+import SEARCHRESULT from '@/views/search_result/search_result'
+import ARTICLE_DETAIL from '@/views/article_detail/article_detail'
 // import mapMutations from "@/store/store"
 // import { getUser } from '@/api/storage_user_token'
 
@@ -40,7 +42,17 @@ const router = new VueRouter({
     { path: '/meTestImExport', name: 'test', component: TEST },
 
     // 配置搜索组件的路由规则
-    { path: '/search', name: 'search', component: SEARCH }
+    { path: '/search', name: 'search', component: SEARCH },
+
+    // 配置点击搜索按钮后跳转到搜索结果页面的路由规则
+    // 解释: path: "/search" 和 path: "/search/120" 和 path: "/search/hello" 是三个路由规则是不同的路由是不同的路径地址
+    // 所以 要想当path路径不同的情况下却想要对应上同一个组件时,就需要用到动态路由这一概念了,,,
+    // 下面的写法就是动态路由  : 冒号后面的 是key  我们通过路径传参 传过来的就是value  就会被key绑定 key就会截取路径上对应的位置上的值,从而导致路径是没有被截取的那部分,
+    // 从而就达到了path路径不同的情况下对应上同一个组件了,,,
+    { path: '/search/:keyword', name: 'searchResult', component: SEARCHRESULT },
+
+    // 配置文章详情页路由规则
+    { path: '/article_detail/:keyword', name: 'articleDetail', component: ARTICLE_DETAIL }
 
   ]
 })

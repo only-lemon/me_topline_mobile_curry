@@ -16,3 +16,12 @@ export var gainSuggestions = (q) => {
     }
   })
 }
+
+// 获取搜索结果需要发送的请求的方法
+export var gainArticleSearchResult = (params) => {
+  return instance({
+    url: '/app/v1_0/search',
+    method: 'GET',
+    params
+  })
+}

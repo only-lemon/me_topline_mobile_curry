@@ -8,7 +8,7 @@ import instance from '@/utility/request_config_axios'
 export var login = (requestParams) => {
   return instance({
     url: '/app/v1_0/authorizations',
-    method: 'post',
+    method: 'POST',
     data: requestParams
   })
 }
@@ -17,7 +17,7 @@ export var login = (requestParams) => {
 export var addBlackList = (requestParams) => {
   return instance({
     url: '/app/v1_0/user/blacklists',
-    method: 'post',
+    method: 'POST',
     data: requestParams
   })
 }
