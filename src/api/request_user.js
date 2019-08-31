@@ -21,3 +21,20 @@ export var addBlackList = (requestParams) => {
     data: requestParams
   })
 }
+
+// 关注用户需要发送的请求的方法
+export var subscriptionUser = userID => {
+  return instance({
+    url: '/app/v1_0/user/followings',
+    method: 'POST',
+    data: { target: userID }
+  })
+}
+
+// 取消关注用户需要发送的请求的方法
+export var cancelSubscriptionUser = userID => {
+  return instance({
+    url: `/app/v1_0/user/followings/${userID}`,
+    method: 'DELETE'
+  })
+}

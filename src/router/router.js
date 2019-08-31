@@ -52,7 +52,7 @@ const router = new VueRouter({
     { path: '/search/:keyword', name: 'searchResult', component: SEARCHRESULT },
 
     // 配置文章详情页路由规则
-    { path: '/article_detail/:keyword', name: 'articleDetail', component: ARTICLE_DETAIL }
+    { path: '/article_detail/:articleID', name: 'articleDetail', component: ARTICLE_DETAIL }
 
   ]
 })

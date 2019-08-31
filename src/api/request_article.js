@@ -23,3 +23,29 @@ export var reportArticle = (params) => {
     data: params
   })
 }
+
+// 获取新闻文章详情需要发送的请求的方法
+export var gainArticleDetail = (articleID) => {
+  return instance({
+    url: `/app/v1_0/articles/${articleID}`,
+    method: 'GET'
+  })
+}
+
+// 获取评论或评论回复数据需要发送的请求的方法
+export var gainCommentORReply = (params) => {
+  return instance({
+    url: '/app/v1_0/comments',
+    method: 'GET',
+    params
+  })
+}
+
+// 添加评论或评论回复需要发送的请求的方法
+export var increaseCommentORReplyComment = (params) => {
+  return instance({
+    url: '/app/v1_0/comments',
+    method: 'POST',
+    data: params
+  })
+}
