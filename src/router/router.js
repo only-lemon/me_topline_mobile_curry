@@ -18,6 +18,7 @@ import SEARCHRESULT from '@/views/search_result/search_result'
 import ARTICLE_DETAIL from '@/views/article_detail/article_detail'
 import USER_CENTER from '@/views/user_center/user_center'
 import USER_EDIT from '@/views/user_edit/user_edit'
+import CHAT from '@/views/chat/chat'
 
 // import mapMutations from "@/store/store"
 // import { getUser } from '@/api/storage_user_token'
@@ -66,7 +67,10 @@ const router = new VueRouter({
     { path: '/article_detail/:articleID', name: 'articleDetail', component: ARTICLE_DETAIL },
 
     // 配置用户编辑组件路由规则
-    { path: '/user_edit', name: 'user_edit', component: USER_EDIT }
+    { path: '/user_edit', name: 'user_edit', component: USER_EDIT },
+
+    // 配置小智同学组件路由规则
+    { path: '/chat', name: 'chat666', component: CHAT }
 
   ]
 })

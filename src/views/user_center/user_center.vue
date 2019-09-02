@@ -21,7 +21,7 @@
     <van-cell-group>
       <van-cell title="消息通知" is-link />
       <van-cell title="用户反馈" is-link />
-      <van-cell title="小智同学" is-link />
+      <van-cell title="小智同学" is-link @click="$router.push('/chat')" />
       <van-cell title="系统设置" is-link to="/settings" />
     </van-cell-group>
     <!-- /个人中心组件,个人中心页下的下半部分 -->
