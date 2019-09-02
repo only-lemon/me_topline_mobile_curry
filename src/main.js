@@ -6,6 +6,10 @@ import 'vant/lib/index.css'
 import store from '@/store/store'
 import '@/style/common_style.css'
 import { relativeTime } from '@/utility/dayjs'
+import fastClick from 'fastclick'
+
+// 使用 fastClick 解决移动端 300ms 延迟问题
+fastClick.attach(document.body)
 
 Vue.filter('relativeTime', relativeTime)
 

@@ -106,7 +106,7 @@ export default {
   components: {
     'edit-channel': EDITCHANNEL
   },
-  name: 'HomeIndex',
+  name: 'home',
   data () {
     return {
       activeChannelIndex: 0,
