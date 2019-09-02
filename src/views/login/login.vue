@@ -40,8 +40,12 @@ export default {
         // 存userToken 存到vuex容器当中去
         this.setUser(userToken)
 
-        // 跳转到首页
-        this.$router.push({ name: 'home' })
+        // 跳转到首页  刚开始写项目的时候是登录成功后直接跳转到首页,,,不需要考虑那么多的逻辑
+        // 现在项目写到了最后一天了快完结了,,,就会产生新的需求,,,假如用户在另一个页面中呆的时间过长登录失效了,,需要重新登录
+        // 则用户触发了需要token的请求的话就会跳转到登录页,,,但是用户登录成功后就不是像刚开始写项目的时候正常的逻辑下来,,,登录成功后直接跳转到首页了,,,
+        // 而是,,,从哪里来,,,回哪里去,,,就是下面这段代码,,,
+        const { redirect } = this.$route.query
+        this.$router.push(redirect || { name: 'home' })
       } catch (err) {
         if (err.response && err.response.status === 400) {
           // 登录失败,后端响应状态码为400 ,提示用户错误信息

@@ -13,6 +13,14 @@ export var login = (requestParams) => {
   })
 }
 
+// 获取当前登录用户的信息
+export const getSelf = () => {
+  return instance({
+    method: 'GET',
+    url: '/app/v1_0/user'
+  })
+}
+
 // 拉黑发表文章的作者
 export var addBlackList = (requestParams) => {
   return instance({
@@ -36,5 +44,41 @@ export var cancelSubscriptionUser = userID => {
   return instance({
     url: `/app/v1_0/user/followings/${userID}`,
     method: 'DELETE'
+  })
+}
+
+// 获取用户个人资料
+export const getUserProfile = () => {
+  return instance({
+    method: 'GET',
+    url: '/app/v1_0/user/profile'
+  })
+}
+
+// 更新用户头像所需要发送的请求的方法
+export const updateUserPhoto = file => {
+  const formData = new FormData()
+  formData.append('photo', file)
+  return instance({
+    method: 'PATCH',
+    url: '/app/v1_0/user/photo',
+    data: formData
+  })
+}
+
+// 更新用户其他基本信息需要发送的请求的方法
+export const updateUserBaseInfo = ({ // 形参 解构出来,,,调用函数时,,,传递过来的,,,实参,,,参数
+  name,
+  gender,
+  birthday
+}) => {
+  return instance({
+    method: 'PATCH',
+    url: '/app/v1_0/user/profile',
+    data: {
+      name,
+      gender,
+      birthday
+    }
   })
 }

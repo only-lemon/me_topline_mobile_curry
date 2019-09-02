@@ -23,10 +23,10 @@
           <p style="color: #363636;">{{item.content}}</p>
           <p>
             <span style="margin-right: 10px;">{{item.pubdate | relativeTime}}</span>
-            <van-button size="mini" type="default">回复</van-button>
+            <van-button size="mini" type="default"  @click="onReplyShow(item)" >回复</van-button>
           </p>
         </div>
-        <van-icon slot="right-icon" name="like-o" />
+        <van-icon slot="right-icon" :name="item.is_liking ? 'like' : 'like-o' "  @click="toCommentClickLikeORUnlike(item)" />
       </van-cell>
     </van-list>
 
@@ -35,11 +35,32 @@
         <van-button slot="button" size="mini" type="info" @click="incrementCommentORReplyComment" >发布</van-button>
       </van-field>
     </van-cell-group>
+    <!-- 回复弹窗 -->
+      <van-popup
+      v-model="isReplyShow"
+      round
+      position="bottom"
+      :style="{ height: '90%' }"
+    >
+      <van-list
+        v-model="reply.loading"
+        :finished="reply.finished"
+        finished-text="没有更多了"
+        @load="replyOnLoad"
+      >
+        <van-cell
+          v-for="item in reply.replyList"
+          :key="item.com_id.toString()"
+          :title="item.content"
+        />
+      </van-list>
+    </van-popup>
+    <!-- /回复弹窗 -->
   </div>
 </template>
 
 <script>
-import { gainCommentORReply, increaseCommentORReplyComment } from '@/api/request_article'
+import { gainCommentORReply, increaseCommentORReplyComment, toCommentClickLike, toCommentClickUnlike } from '@/api/request_article'
 
 export default {
   name: 'articleComment',
@@ -59,7 +80,21 @@ export default {
       limit: null,
 
       // 对此文章输入的评论内容
-      commentContent: ''
+      commentContent: '',
+
+      // 控制回复的弹出层显示与隐藏
+      isReplyShow: false,
+
+      // 存一下当前点击的哪个评论
+      currentComment: null,
+
+      // 回复相关的需要用到的数据
+      reply: {
+        loading: false,
+        finished: false,
+        replyList: [],
+        offset: null // 存储加载下一页评论回复列表的标记
+      }
     }
   },
 
@@ -117,6 +152,62 @@ export default {
 
       // 清空输入框内容
       this.commentContent = ''
+    },
+
+    // 对评论或评论回复点赞或者取消点赞的方法
+    async toCommentClickLikeORUnlike (comment) {
+      // 如果当前用户已经对此评论点过赞 则调用取消点赞请求
+      if (comment.is_liking) {
+        await toCommentClickUnlike(comment.com_id.toString())
+        comment.is_liking = false
+      } else {
+        // 如果当前用户没有对此评论点过赞 则调用点赞请求
+        await toCommentClickLike(comment.com_id.toString())
+        comment.is_liking = true
+      }
+    },
+
+    // 展示回复评论数据所用到的方法
+    async replyOnLoad () {
+      const { data } = await gainCommentORReply({
+        type: 'c',
+        source: this.currentComment.com_id.toString(),
+        offset: this.reply.offset
+      })
+
+      this.reply.replyList.push(...data.data.results)
+
+      const lastId = data.data.last_id
+
+      if (lastId) {
+        this.reply.offset = lastId
+      } else {
+        // 数据已全部加载结束，不需要 onLoad 了
+        this.reply.finished = true
+      }
+
+      // 取消本次的 loading
+      this.reply.loading = false
+
+      // 异步更新数据
+      // setTimeout(() => {
+      //   for (let i = 0; i < 10; i++) {
+      //     this.reply.replyList.push(this.reply.replyList.length + 1)
+      //   }
+      //   // 加载状态结束
+      //   this.reply.loading = false
+
+      //   // 数据全部加载完成
+      //   if (this.reply.replyList.length >= 40) {
+      //     this.reply.finished = true
+      //   }
+      // }, 500)
+    },
+
+    onReplyShow (comment) {
+      this.currentComment = comment
+      console.log(comment.com_id.toString())
+      this.isReplyShow = true
     }
   }
 }

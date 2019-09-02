@@ -49,3 +49,20 @@ export var increaseCommentORReplyComment = (params) => {
     data: params
   })
 }
+
+// 对评论或评论回复点赞需要发送的请求的方法
+export var toCommentClickLike = commentID => {
+  return instance({
+    url: '/app/v1_0/comment/likings',
+    method: 'POST',
+    data: { target: commentID }
+  })
+}
+
+// 取消对文章点赞需要发送的请求的方法
+export var toCommentClickUnlike = commentID => {
+  return instance({
+    url: `/app/v1_0/article/likings/${commentID}`,
+    method: 'DELETE'
+  })
+}

@@ -16,6 +16,9 @@ import TABBAR from '@/views/tabbar/tabbar'
 import SEARCH from '@/views/search/search'
 import SEARCHRESULT from '@/views/search_result/search_result'
 import ARTICLE_DETAIL from '@/views/article_detail/article_detail'
+import USER_CENTER from '@/views/user_center/user_center'
+import USER_EDIT from '@/views/user_edit/user_edit'
+
 // import mapMutations from "@/store/store"
 // import { getUser } from '@/api/storage_user_token'
 
@@ -33,9 +36,17 @@ const router = new VueRouter({
       // name: 'tabbar',
       component: TABBAR,
       children: [
-        { path: '/', name: 'home', component: HOME }
+
+        // 配置首页组件路由规则
+        { path: '/', name: 'home', component: HOME },
+
+        // 配置用户个人中心组件路由规则
+        { path: '/user_center', name: 'user_center', component: USER_CENTER }
+
       ]
     },
+
+    // 配置登录页,登录组件路由规则
     { path: '/login', name: 'login', component: LOGIN },
 
     // 此路由跟项目完全没关系,,,我是为了测试导入导出的现象配置的路由规则
@@ -52,7 +63,10 @@ const router = new VueRouter({
     { path: '/search/:keyword', name: 'searchResult', component: SEARCHRESULT },
 
     // 配置文章详情页路由规则
-    { path: '/article_detail/:articleID', name: 'articleDetail', component: ARTICLE_DETAIL }
+    { path: '/article_detail/:articleID', name: 'articleDetail', component: ARTICLE_DETAIL },
+
+    // 配置用户编辑组件路由规则
+    { path: '/user_edit', name: 'user_edit', component: USER_EDIT }
 
   ]
 })
