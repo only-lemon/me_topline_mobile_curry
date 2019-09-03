@@ -8,17 +8,19 @@
 
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import HOME from '@/views/home/home'
-import LOGIN from '@/views/login/login'
-import TEST from '@/me_test_export_import/me_test_export_import_for_import'
-import IS404 from '@/views/404/404'
-import TABBAR from '@/views/tabbar/tabbar'
-import SEARCH from '@/views/search/search'
-import SEARCHRESULT from '@/views/search_result/search_result'
-import ARTICLE_DETAIL from '@/views/article_detail/article_detail'
-import USER_CENTER from '@/views/user_center/user_center'
-import USER_EDIT from '@/views/user_edit/user_edit'
-import CHAT from '@/views/chat/chat'
+
+// 配置路由懒加载
+const HOME = () => import('@/views/home/home')
+const LOGIN = () => import('@/views/login/login')
+const TEST = () => import('@/me_test_export_import/me_test_export_import_for_import')
+const IS404 = () => import('@/views/404/404')
+const TABBAR = () => import('@/views/tabbar/tabbar')
+const SEARCH = () => import('@/views/search/search')
+const SEARCHRESULT = () => import('@/views/search_result/search_result')
+const ARTICLE_DETAIL = () => import('@/views/article_detail/article_detail')
+const USER_CENTER = () => import('@/views/user_center/user_center')
+const USER_EDIT = () => import('@/views/user_edit/user_edit')
+const CHAT = () => import('@/views/chat/chat')
 
 // import mapMutations from "@/store/store"
 // import { getUser } from '@/api/storage_user_token'

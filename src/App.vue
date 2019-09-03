@@ -22,5 +22,6 @@ export default {
 #sole{
   color:purple;
   text-align: center;
+  font-size: 0.6rem;
 }
 </style>
